@@ -6,7 +6,7 @@ from webbrowser import open_new_tab as wb_open_new_tab
 
 from bokeh.embed import file_html
 from bokeh.layouts import column
-from bokeh.models import Column, ColumnDataSource
+from bokeh.models import Column, ColumnDataSource, HoverTool
 from bokeh.models import Legend  # type: ignore [attr-defined]
 from bokeh.plotting import figure
 from bokeh.resources import CDN
@@ -24,6 +24,8 @@ SCHEMA = pl.Schema(
         'vg_m3': pl.Float64,
         'vm_m3': pl.Float64,
         'vb_m3': pl.Float64,
+        'tm_k': pl.Float64,
+        'pm_bar': pl.Float64,
         'pulses_reed_1': pl.Int64,
         'pulses_reed_2': pl.Int64,
         'q_m3h': pl.Float64,
@@ -101,6 +103,7 @@ def create_column_plot(df: pl.DataFrame) -> Column:
 
     # plot of time delta
     fig_dt = figure(title='Time delta', x_axis_label='Time (s)', y_axis_label='Time interval (s)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
+    fig_dt.add_tools(HoverTool())
     fig_dt.scatter('time_s', 'delta_time_s', source=cds, color='black')
     fig_dt.line(   'time_s', 'delta_time_s', source=cds, color='black')
     assert hasattr(fig_dt.y_range, 'start')  # for MyPy
@@ -108,6 +111,7 @@ def create_column_plot(df: pl.DataFrame) -> Column:
 
     # plot of volumes
     fig_v = figure(title='Volumes', x_axis_label='Time (s)', y_axis_label='Volume (m^3)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
+    fig_v.add_tools(HoverTool())
     fig_v.add_layout(Legend(), 'right')
     fig_v.legend.click_policy = 'hide'
     fig_v.scatter('time_s', 'vg_m3', source=cds, legend_label='Vg', color='red')
@@ -119,6 +123,7 @@ def create_column_plot(df: pl.DataFrame) -> Column:
 
     # plot of delta volumes
     fig_dv = figure(title='Delta volumes', x_axis_label='Time (s)', y_axis_label='Delta volume (m^3)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
+    fig_dv.add_tools(HoverTool())
     fig_dv.add_layout(Legend(), 'right')
     fig_dv.legend.click_policy = 'hide'
     fig_dv.scatter('time_s', 'delta_vg_m3', source=cds, legend_label='delta Vg', color='red')
@@ -130,6 +135,7 @@ def create_column_plot(df: pl.DataFrame) -> Column:
 
     # plot of reeds counts
     fig_rc = figure(title='Reeds counts', x_axis_label='Time (s)', y_axis_label='Counts (adim. natural)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
+    fig_rc.add_tools(HoverTool())
     fig_rc.add_layout(Legend(), 'right')
     fig_rc.legend.click_policy = 'hide'
     fig_rc.scatter('time_s', 'pulses_reed_1', source=cds, legend_label='reed 1', color='crimson', marker='triangle', size=6)
@@ -139,6 +145,7 @@ def create_column_plot(df: pl.DataFrame) -> Column:
 
     # plot of delta reeds counts
     fig_drc = figure(title='Delta reeds counts', x_axis_label='Time (s)', y_axis_label='Delta counts (adim. natural)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
+    fig_drc.add_tools(HoverTool())
     fig_drc.add_layout(Legend(), 'right')
     fig_drc.legend.click_policy = 'hide'
     fig_drc.scatter('time_s', 'delta_pulses_reed_1', source=cds, legend_label='delta reed 1', color='crimson', marker='triangle', size=6)
@@ -148,12 +155,14 @@ def create_column_plot(df: pl.DataFrame) -> Column:
 
     # plot of flow rate
     fig_q = figure(title='Flow rate', x_axis_label='Time (s)', y_axis_label='Flow rate (m^3/h)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
-    fig_q.scatter('time_s', 'q_m3h', source=cds, color='black', marker='diamond')
+    fig_q.add_tools(HoverTool())
+    fig_q.scatter('time_s', 'q_m3h', source=cds, color='black', marker='diamond', size=6)
     fig_q.line(   'time_s', 'q_m3h', source=cds, color='black')
 
     # plot of integral flow
     fig_iq = figure(title='Integral flow', x_axis_label='Time (s)', y_axis_label='Flow (m^3)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
-    fig_iq.scatter('time_s', 'integral_q_m3', source=cds, color='grey', marker='square', size=6)
+    fig_iq.add_tools(HoverTool())
+    fig_iq.scatter('time_s', 'integral_q_m3', source=cds, color='grey', marker='square')
     fig_iq.line(   'time_s', 'integral_q_m3', source=cds, color='grey')
 
     # create column plot
