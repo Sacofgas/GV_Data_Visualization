@@ -97,10 +97,23 @@ def get_df(gv_sampling_dir_path: Path | str) -> pl.DataFrame:
     )
     # reorder columns
     df = df.select(
-        'sample_index', 'time_s', 'delta_time_s',
-        'vg_m3', 'vm_m3', 'vb_m3', 'delta_vg_m3', 'delta_vm_m3', 'delta_vb_m3',
-        'pulses_reed_1', 'pulses_reed_2', 'delta_pulses_reed_1', 'delta_pulses_reed_2',
-        'integral_q_m3', 'q_m3h',
+        'sample_index',
+        'time_s',
+        'delta_time_s',
+        'tm_k',
+        'pm_bar',
+        'vg_m3',
+        'vm_m3',
+        'vb_m3',
+        'delta_vg_m3',
+        'delta_vm_m3',
+        'delta_vb_m3',
+        'pulses_reed_1',
+        'pulses_reed_2',
+        'delta_pulses_reed_1',
+        'delta_pulses_reed_2',
+        'integral_q_m3',
+        'q_m3h',
     )
     # return dataframe
     return df
@@ -117,6 +130,18 @@ def create_column_plot(df: pl.DataFrame) -> Column:
     fig_dt.line(   'time_s', 'delta_time_s', source=cds, color='black')
     assert hasattr(fig_dt.y_range, 'start')  # for MyPy
     fig_dt.y_range.start = 0.0
+
+    # # plot of temperature
+    # fig_t = figure(title='Temperature', x_axis_label='Time (s)', y_axis_label='Temperature (K)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
+    # fig_t.add_tools(HoverTool())
+    # fig_t.scatter('time_s', 'tm_k', source=cds, color='grey')
+    # fig_t.line(   'time_s', 'tm_k', source=cds, color='grey')
+
+    # # plot of pressure
+    # fig_p = figure(title='Pressure', x_axis_label='Time (s)', y_axis_label='Pressure (bar)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
+    # fig_p.add_tools(HoverTool())
+    # fig_p.scatter('time_s', 'pm_bar', source=cds, color='grey')
+    # fig_p.line(   'time_s', 'pm_bar', source=cds, color='grey')
 
     # plot of volumes
     fig_v = figure(title='Volumes', x_axis_label='Time (s)', y_axis_label='Volume (m^3)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
@@ -177,6 +202,8 @@ def create_column_plot(df: pl.DataFrame) -> Column:
     # create column plot
     col = column(
         fig_dt,
+        # fig_t,
+        # fig_p,
         fig_v,
         fig_dv,
         fig_rc,
