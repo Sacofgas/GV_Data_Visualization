@@ -77,9 +77,9 @@ def get_df(gv_sampling_dir_path: Path | str) -> pl.DataFrame:
     df = df.drop('unix_time')
     # create delta and cumulative columns
     df = df.with_columns(
-        delta_vg_m3s=pl.col('vg_m3').diff() / pl.col('delta_time_s'),
-        delta_vm_m3s=pl.col('vm_m3').diff() / pl.col('delta_time_s'),
-        delta_vb_m3s=pl.col('vb_m3').diff() / pl.col('delta_time_s'),
+        delta_vg_m3=pl.col('vg_m3').diff(),
+        delta_vm_m3=pl.col('vm_m3').diff(),
+        delta_vb_m3=pl.col('vb_m3').diff(),
         delta_pulses_reed_1=pl.col('pulses_reed_1').diff(),
         delta_pulses_reed_2=pl.col('pulses_reed_2').diff(),
         integral_q_m3=(pl.col('q_m3h') / 3600.0 * pl.col('delta_time_s')).cum_sum(),
@@ -87,7 +87,7 @@ def get_df(gv_sampling_dir_path: Path | str) -> pl.DataFrame:
     # reorder columns
     df = df.select(
         'sample_index', 'time_s', 'delta_time_s',
-        'vg_m3', 'vm_m3', 'vb_m3', 'delta_vg_m3s', 'delta_vm_m3s', 'delta_vb_m3s',
+        'vg_m3', 'vm_m3', 'vb_m3', 'delta_vg_m3', 'delta_vm_m3', 'delta_vb_m3',
         'pulses_reed_1', 'pulses_reed_2', 'delta_pulses_reed_1', 'delta_pulses_reed_2',
         'integral_q_m3', 'q_m3h',
     )
@@ -118,15 +118,15 @@ def create_column_plot(df: pl.DataFrame) -> Column:
     fig_v.line(   'time_s', 'vb_m3', source=cds, legend_label='Vb', color='blue')
 
     # plot of delta volumes
-    fig_dv = figure(title='Delta volumes', x_axis_label='Time (s)', y_axis_label='Delta volume (m^3/s)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
+    fig_dv = figure(title='Delta volumes', x_axis_label='Time (s)', y_axis_label='Delta volume (m^3)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
     fig_dv.add_layout(Legend(), 'right')
     fig_dv.legend.click_policy = 'hide'
-    fig_dv.scatter('time_s', 'delta_vg_m3s', source=cds, legend_label='delta Vg', color='red')
-    fig_dv.scatter('time_s', 'delta_vm_m3s', source=cds, legend_label='delta Vm', color='green')
-    fig_dv.scatter('time_s', 'delta_vb_m3s', source=cds, legend_label='delta Vb', color='blue')
-    fig_dv.line(   'time_s', 'delta_vg_m3s', source=cds, legend_label='delta Vg', color='red')
-    fig_dv.line(   'time_s', 'delta_vm_m3s', source=cds, legend_label='delta Vm', color='green')
-    fig_dv.line(   'time_s', 'delta_vb_m3s', source=cds, legend_label='delta Vb', color='blue')
+    fig_dv.scatter('time_s', 'delta_vg_m3', source=cds, legend_label='delta Vg', color='red')
+    fig_dv.scatter('time_s', 'delta_vm_m3', source=cds, legend_label='delta Vm', color='green')
+    fig_dv.scatter('time_s', 'delta_vb_m3', source=cds, legend_label='delta Vb', color='blue')
+    fig_dv.line(   'time_s', 'delta_vg_m3', source=cds, legend_label='delta Vg', color='red')
+    fig_dv.line(   'time_s', 'delta_vm_m3', source=cds, legend_label='delta Vm', color='green')
+    fig_dv.line(   'time_s', 'delta_vb_m3', source=cds, legend_label='delta Vb', color='blue')
 
     # plot of reeds counts
     fig_rc = figure(title='Reeds counts', x_axis_label='Time (s)', y_axis_label='Counts (adim. natural)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
