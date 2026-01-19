@@ -52,16 +52,24 @@ def validate_unix_time_data(unix_times: pl.Series) -> None:
         raise ValueError(f'UNIX time are not unique.')
     elif not unix_times.is_sorted():
         raise ValueError(f'UNIX times are not monotonically increasing.')
+
+
+def compute_and_print_timing_diagnostics(unix_times: pl.Series) -> None:
+    # compute timing diagnostics
     dt = unix_times.diff()
     dt_avg = dt.mean()
     dt_std = dt.std()
     assert isinstance(dt_avg, float)  # for MyPy
     assert isinstance(dt_std, float)  # for MyPy
     dt_std_over_avg = dt_std / dt_avg
+    # print timing diagnostics
     print(
-        f'{dt_avg = }\n'
-        f'{dt_std = }\n'
-        f'{dt_std_over_avg = }\n'
+        f'\n'
+        f'Timing diagnostics\n'
+        f'dt average (Sps): {dt_avg:.6f}\n'
+        f'dt std (Sps): {dt_std:.6f}\n'
+        f'dt std/average (adim.): {dt_std_over_avg:.6f}\n'
+        f'\n'
     )
 
 
@@ -71,6 +79,7 @@ def get_df(gv_sampling_dir_path: Path | str) -> pl.DataFrame:
     df = pl.read_csv(csv_data_file_path, schema=SCHEMA, null_values=NULL_VALUES)
     # handle time data
     validate_unix_time_data(df['unix_time'])
+    compute_and_print_timing_diagnostics(df['unix_time'])
     df = df.with_columns(
         sample_index=pl.arange(len(df)),
         time_s=pl.col('unix_time') - pl.col('unix_time').min(),
