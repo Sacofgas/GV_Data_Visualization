@@ -9,7 +9,6 @@ from bokeh.layouts import column
 from bokeh.models import Column, ColumnDataSource, HoverTool
 from bokeh.models import Legend  # type: ignore [attr-defined]
 from bokeh.plotting import figure
-from bokeh.resources import CDN
 
 
 ###################
@@ -36,7 +35,8 @@ NULL_VALUES = json_dumps(None)
 # Plot
 WIDTH = 1000
 HEIGHT = 400
-PLOT_HTML_FILE_NAME = 'plot.html'
+PLOT_HTML_TITLE = 'plot'
+PLOT_HTML_FILE_NAME = PLOT_HTML_TITLE + '.html'
 
 
 ###################
@@ -222,7 +222,7 @@ def create_column_plot(df: pl.DataFrame) -> Column:
 
 
 def save_column_plot_as_html(col: Column, dst_dir_path: Path | str, open_: bool = False) -> str:
-    html_str = file_html(col, CDN)
+    html_str = file_html(col, title=PLOT_HTML_TITLE)
     html_file_path = Path(dst_dir_path) / PLOT_HTML_FILE_NAME
     html_file_path.write_text(html_str)
     if open_:
