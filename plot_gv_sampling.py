@@ -66,8 +66,8 @@ def compute_and_print_timing_diagnostics(unix_times: pl.Series) -> None:
     print(
         f'\n'
         f'Timing diagnostics\n'
-        f'dt average (Sps): {dt_avg:.6f}\n'
-        f'dt std (Sps): {dt_std:.6f}\n'
+        f'dt average (s): {dt_avg:.6f}\n'
+        f'dt std (s): {dt_std:.6f}\n'
         f'dt std/average (adim.): {dt_std_over_avg:.6f}\n'
         f'\n'
     )
@@ -132,16 +132,16 @@ def create_column_plot(df: pl.DataFrame) -> Column:
     fig_dt.y_range.start = 0.0
 
     # # plot of temperature
-    # fig_t = figure(title='Temperature', x_axis_label='Time (s)', y_axis_label='Temperature (K)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
-    # fig_t.add_tools(HoverTool())
-    # fig_t.scatter('time_s', 'tm_k', source=cds, color='grey')
-    # fig_t.line(   'time_s', 'tm_k', source=cds, color='grey')
+    fig_t = figure(title='Temperature', x_axis_label='Time (s)', y_axis_label='Temperature (K)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
+    fig_t.add_tools(HoverTool())
+    fig_t.scatter('time_s', 'tm_k', source=cds, color='grey')
+    fig_t.line(   'time_s', 'tm_k', source=cds, color='grey')
 
     # # plot of pressure
-    # fig_p = figure(title='Pressure', x_axis_label='Time (s)', y_axis_label='Pressure (bar)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
-    # fig_p.add_tools(HoverTool())
-    # fig_p.scatter('time_s', 'pm_bar', source=cds, color='grey')
-    # fig_p.line(   'time_s', 'pm_bar', source=cds, color='grey')
+    fig_p = figure(title='Pressure', x_axis_label='Time (s)', y_axis_label='Pressure (bar)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
+    fig_p.add_tools(HoverTool())
+    fig_p.scatter('time_s', 'pm_bar', source=cds, color='grey')
+    fig_p.line(   'time_s', 'pm_bar', source=cds, color='grey')
 
     # plot of volumes
     fig_v = figure(title='Volumes', x_axis_label='Time (s)', y_axis_label='Volume (m^3)', width=WIDTH, height=HEIGHT, toolbar_location='above')  # type: ignore [call-arg]
@@ -202,8 +202,8 @@ def create_column_plot(df: pl.DataFrame) -> Column:
     # create column plot
     col = column(
         fig_dt,
-        # fig_t,
-        # fig_p,
+        fig_t,
+        fig_p,
         fig_v,
         fig_dv,
         fig_rc,
